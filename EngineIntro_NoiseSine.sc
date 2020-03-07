@@ -1,5 +1,7 @@
 EngineIntro_NoiseSine {
+	classvar numVoices = 16;
 	var synth;
+	var synthGroup;
 	var modBus;
 	var modSource;
 
@@ -23,15 +25,18 @@ EngineIntro_NoiseSine {
 			}).send(server);
 
 			server.sync;
+			synthGroup = Group.new(server);
+			modSource = Synth.new(\saw, [\out, modBus], synthGroup, \addBefore);
 
-			synth = Synth.new(\noise_sine, [], server);
+			synth = Array.fill(numVoices, {
+				arg index;
+				var voice;
+				voice = Synth.new(\noise_sine, [], synthGroup);
+				voice.map(\mod, modBus);
+				voice
+			});
 
 			modBus = Bus.control(server, 1);
-
-			synth.map(\mod, modBus);
-
-			modSource = Synth.new(\saw, [\out, modBus], synth, \addBefore);
-
 
 		}.play;
 	}
@@ -44,7 +49,9 @@ EngineIntro_NoiseSine {
 	modOffset{ arg value; modSource.set(\offset, value); }
 
 	free {
-		synth.free;
+		synthGroup.free;
+		modSource.free;
+		modBus.free;
 	}
 }
 
