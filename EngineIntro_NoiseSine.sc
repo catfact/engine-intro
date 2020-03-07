@@ -1,10 +1,7 @@
 EngineIntro_NoiseSine {
-
-	var <synth;
-
-	var <modBus;
-
-	var <modSource;
+	var synth;
+	var modBus;
+	var modSource;
 
 	alloc {
 		arg server;
