@@ -41,6 +41,7 @@ EngineIntro_NoiseSine {
 
 	//-- glue
 	amp { arg value; synth.set(\amp, value); }
+	hz { arg value; synth.set(\hz, value); }
 	modHz { arg value; modSource.set(\hz, value); }
 	modScale { arg value; modSource.set(\scale, value); }
 	modOffset{ arg value; modSource.set(\offset, value); }
