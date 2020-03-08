@@ -26,6 +26,8 @@ EngineIntro_NoiseSine {
 
 			server.sync;
 			synthGroup = Group.new(server);
+
+			modBus = Bus.control(server, 1);
 			modSource = Synth.new(\saw, [\out, modBus], synthGroup, \addBefore);
 
 			synth = Array.fill(numVoices, {
@@ -36,14 +38,13 @@ EngineIntro_NoiseSine {
 				voice
 			});
 
-			modBus = Bus.control(server, 1);
 
 		}.play;
 	}
 
 	//-- glue
-	amp { arg value; synth.set(\amp, value); }
-	hz { arg value; synth.set(\hz, value); }
+	amp { arg index, value; synth[index].set(\amp, value); }
+	hz { arg index, value; synth[index].set(\hz, value); }
 	modHz { arg value; modSource.set(\hz, value); }
 	modScale { arg value; modSource.set(\scale, value); }
 	modOffset{ arg value; modSource.set(\offset, value); }
@@ -66,16 +67,14 @@ Engine_Intro_NoiseSine : CroneEngine {
 	alloc {
 		kernel.alloc(Crone.server);
 
-		//... add commands and polls
-
-		addCommand(\hz, {
+		addCommand(\hz, "if", {
 			arg msg;
-			kernel.hz(msg[1]);
+			kernel.hz(msg[1], msg[2]);
 		});
 
-		addCommand(\amp, {
+		addCommand(\amp, "if", {
 			arg msg;
-			kernel.amp(msg[1]);
+			kernel.amp(msg[1], msg[2]);
 		});
 	}
 
